@@ -1,72 +1,80 @@
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const userdata = require('../models/user');
+const otpmodel = require('../models/otpmodel');
+const jwt = require('jsonwebtoken');
 const sendgrid = require('nodemailer-sendgrid-transport');
 const dotenv = require('dotenv/config');
+const otpgenerator = require('otp-generator');
+const user = require('../models/user');
 const transport = nodemailer.createTransport(sendgrid({
     auth: {
         api_key: process.env.api
     }
 }))  
-exports.signupreq = (req , res ,next)=>{
+exports.signupreq = async(req , res ,next)=>{
     const name = req.body.name;
     const email = req.body.email;
     console.log(email);
-    userdata.findOne({email:email})
-    .then(useremail =>{
-        if(useremail){
-            return res.json('already exist');
+    const OTPgen = otpgenerator.generate(6 ,{
+        digits:true , alphabets : false , uppercase:false,
+        specialChars:false
+    }); 
+    otpmodel.findOne({email:email}).then(result =>{
+        if(result===null){
+            const otp = new otpmodel({
+                email:email,
+                otp:OTPgen
+            });
+            return otp.save();
         }
-        const user = new userdata({
-            name:name,
-            email:email,
-            enterotp:'1234'
-        })
-        transport.sendMail({
-            to:email,
-            from:'kyabaathai21@gmail.com',  
-            subject:'your OTP',
-            html:'<h1> 1234 </h1>'
-        })
-        user.save();
-        res.json("user signup, now set password");
+        else{
+            return otpmodel.findOneAndUpdate({email:email},{otp:OTPgen});
+        }   
     })
-    .catch(err=>{
-        console.log(err);
+    userdata.findOne({email:email}).then(result =>{
+        if(result==null){
+            const user = new userdata({
+                name:name,
+                email:email,
+            })
+            user.save();
+        }
     })
+    transport.sendMail({
+        to:email,
+        from:'kyabaathai21@gmail.com',  
+        subject:'your OTP',
+        html:'<h1>  </h1>'
+    })
+    res.json("otp send");
 }
 exports.otpreq = (req , res ,next)=>{
-    const otp = req.body.enterotp;
-    console.log(otp)
-    userdata.findOne({email:req.body.email})
-    .then(otp=>{
-        if(req.body.enterotp == '1234')
-        return res.json("otp verified");
+    const enteredotp = req.body.otp;
+    console.log(enteredotp);
+    otpmodel.findOne({email:req.body.email})
+    .then(OTP=>{
+        console.log(OTP.otp);
+        if(enteredotp === OTP.otp ){
+            return res.json("otp verified");
+        }
+        else{
+            return res.json("verification failed");
+        }
     })
     .catch(err=>{
         console.log(err);
     })
-    // return res.json("verification failed");
 }
 exports.passreq = async(req ,res ,next)=>{
-    // const email = req.body.email;
+    const email = req.body.email;
     const pass = req.body.pass;
     const confirmpass = req.body.confirmpass;
+    if(pass !== confirmpass){
+        return res.json('password must be same!');
+    }
     const hpass = await bcrypt.hash(pass ,10);
-    userdata.findOne(userdata)
-    .then(()=>{
-        if(pass !== confirmpass){
-            return res.json('password must be same!');
-        }
-        return bcrypt.hash(pass ,10)
-        .then(hashpass=>{
-            const user = userdata({
-                email:email,
-                pass:hashpass
-            })   
-            user.save(); 
-            res.json("user created");
-        })
-    })
-    
+    res.json('password set');
+    const token = jwt.sign({},process.env.tkn);
+    return userdata.findOneAndUpdate({email:email} ,{pass : hpass ,token:token})
 }
