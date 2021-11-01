@@ -45,7 +45,7 @@ exports.signupreq = async(req , res ,next)=>{
         to:email,
         from:'kyabaathai21@gmail.com',  
         subject:'your OTP',
-        html:'<h1>  </h1>'
+        html:`<h1> your otp is:${OTPgen} </h1>`
     })
     res.json("otp send");
 }

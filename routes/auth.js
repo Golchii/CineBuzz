@@ -9,11 +9,9 @@ const signupController = require('../controllers/signup');
 const isauth = require('../middleware/isAuth');
 
 // router
-router.post('/login',[body('email').isEmail()
-.withMessage('please enter valid email')
-.normalizeEmail(),body('pass').trim().isLength({min:8, max:16})
-],loginController.loginReq);
-router.post('/signup',isauth,signupController.signupreq);
+router.post('/login',loginController.loginReq);
+router.get('/auth',isauth.auth);
+router.post('/signup',signupController.signupreq);
 router.post('/otp',signupController.otpreq);
 router.put('/password',signupController.passreq)
 module.exports = router;
