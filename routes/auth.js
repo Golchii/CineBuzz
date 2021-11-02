@@ -9,8 +9,8 @@ const signupController = require('../controllers/signup');
 const isauth = require('../middleware/isAuth');
 
 // router
-router.post('/login',loginController.loginReq);
-router.get('/auth',isauth.auth);
+router.post('/login',isauth,loginController.loginReq);
+// router.get('/auth',isauth);
 router.post('/signup',signupController.signupreq);
 router.post('/otp',signupController.otpreq);
 router.put('/password',signupController.passreq)
