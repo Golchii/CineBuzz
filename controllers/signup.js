@@ -16,38 +16,41 @@ exports.signupreq = async(req , res ,next)=>{
     const name = req.body.name;
     const email = req.body.email;
     console.log(email);
-    const OTPgen = otpgenerator.generate(6 ,{
-        digits:true , alphabets : false , uppercase:false,
-        specialChars:false
-    }); 
-    otpmodel.findOne({email:email}).then(result =>{
-        if(result===null){
-            const otp = new otpmodel({
-                email:email,
-                otp:OTPgen
-            });
-            return otp.save();
-        }
-        else{
-            return otpmodel.findOneAndUpdate({email:email},{otp:OTPgen});
-        }   
-    })
     userdata.findOne({email:email}).then(result =>{
-        if(result==null){
-            const user = new userdata({
-                name:name,
-                email:email,
-            })
-            user.save();
+        if(result){
+            console.log('already exist');
+            res.statusCode = 301;
+            return res.json('already exist');
         }
+        const OTPgen = otpgenerator.generate(6 ,{
+            digits:true , alphabets : false , uppercase:false,
+            specialChars:false
+        }); 
+        otpmodel.findOne({email:email}).then(result =>{
+            if(result===null){
+                const otp = new otpmodel({
+                    email:email,
+                    otp:OTPgen
+                });
+                otp.save();
+            }
+            else{
+                return otpmodel.findOneAndUpdate({email:email},{otp:OTPgen});
+            }   
+        })
+        transport.sendMail({
+            to:email,
+            from:'kyabaathai21@gmail.com',  
+            subject:'your OTP',
+            html:`<h1> your otp is:${OTPgen} </h1>`
+        })
+        res.statusCode=201;
+        console.log('otp send');
+        res.json("otp send");
+    }).catch(err=>{
+        console.log(err);
+        res.statusCode = 402;
     })
-    transport.sendMail({
-        to:email,
-        from:'kyabaathai21@gmail.com',  
-        subject:'your OTP',
-        html:`<h1> your otp is:${OTPgen} </h1>`
-    })
-    res.json("otp send");
 }
 exports.otpreq = (req , res ,next)=>{
     const enteredotp = req.body.otp;
@@ -56,9 +59,13 @@ exports.otpreq = (req , res ,next)=>{
     .then(OTP=>{
         console.log(OTP.otp);
         if(enteredotp === OTP.otp ){
+            res.statusCode = 201;
+            console.log('otp verified');
             return res.json("otp verified");
         }
         else{
+            res.statusCode = 401;
+            console.log('otp verification failed');
             return res.json("verification failed");
         }
     })
@@ -67,6 +74,7 @@ exports.otpreq = (req , res ,next)=>{
     })
 }
 exports.passreq = async(req ,res ,next)=>{
+    const name = req.body.name;
     const email = req.body.email;
     const pass = req.body.pass;
     const confirmpass = req.body.confirmpass;
@@ -75,6 +83,64 @@ exports.passreq = async(req ,res ,next)=>{
     }
     const hpass = await bcrypt.hash(pass ,10);
     res.json('password set');
+    res.statusCode = 201;
     const token = jwt.sign({},process.env.tkn);
-    return userdata.findOneAndUpdate({email:email} ,{pass : hpass ,token:token})
+    const data = new userdata({
+        name:name,
+        email:email,
+        pass:hpass,
+        token:token
+    })
+    return data.save()
+}
+exports.Rpassreq = async(req ,res ,next)=>{
+    const email = req.body.email;
+    const pass = req.body.pass;
+    const confirmpass = req.body.confirmpass;
+    if(pass !== confirmpass){
+        res.statusCode = 301;
+        return res.json('password must be same!');
+    }
+    const hpass = await bcrypt.hash(pass ,10);
+    res.json('password set');
+    res.statusCode = 201;
+    const token = jwt.sign({},process.env.tkn); 
+    return userdata.updateMany({email:email},{pass:hpass,token:token});
+}
+exports.forgotreq = async(req , res ,next)=>{
+    const email = req.body.email;
+    console.log(email);
+    userdata.findOne({email:email}).then(result =>{
+        if(!result){
+            console.log('email not exist');
+            res.statusCode=401;
+            return res.json('not exist');
+        }
+        console.log('1212');
+        const OTPgen = otpgenerator.generate(6 ,{
+            digits:true , alphabets : false , uppercase:false,
+            specialChars:false
+        }); 
+        otpmodel.findOne({email:email}).then(result =>{
+            if(result===null){
+                const otp = new otpmodel({
+                    email:email,
+                    otp:OTPgen
+                });
+                otp.save();
+            }
+            else{
+                return otpmodel.findOneAndUpdate({email:email},{otp:OTPgen});
+            }   
+        })
+        transport.sendMail({
+            to:email,
+            from:'kyabaathai21@gmail.com',  
+            subject:'your OTP',
+            html:`<h1> your otp is:${OTPgen} </h1>`
+        })
+        res.statusCode=201;
+        console.log('otp send');
+        res.json("otp send");
+    })
 }
