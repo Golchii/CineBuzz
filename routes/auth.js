@@ -1,15 +1,20 @@
 const path = require('path');
 const express = require('express');
-const {body} = require('express-validator/check');
+const userdata = require('../models/user');
+
 const router = express.Router();
 // controller
 const loginController = require('../controllers/login');
 const signupController = require('../controllers/signup');
-
+// middleware
+const isauth = require('../middleware/isAuth');
 
 // router
 router.post('/login',loginController.loginReq);
+// router.get('/auth',isauth);
+router.post('/forgot',signupController.forgotreq);
 router.post('/signup',signupController.signupreq);
 router.post('/otp',signupController.otpreq);
-router.post('/password',signupController.passreq)
+router.put('/password',signupController.passreq)
+router.put('/resetpass',signupController.Rpassreq);
 module.exports = router;

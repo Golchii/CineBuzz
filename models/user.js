@@ -12,7 +12,7 @@ userloginschema = new mongoose.Schema({
     confirmpass:{
         type:String
     },
-    enterotp:{
+    token:{
         type:String
     }
 });

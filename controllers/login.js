@@ -1,21 +1,25 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const userloginmodel = require('../models/user');
 exports.loginReq = async(req , res , next)=>{ 
     const email = req.body.email;
     const pass = req.body.pass;
-    console.log(email);
-    console.log(pass);
-    const hpass = await bcrypt.hash(pass ,10)
-    console.log(hpass);
-    userloginmodel.findOne({email:email,pass:hpass})
-    .then(useremail =>{
-        if(useremail){
-            return res.json('welcome :)');
+    const token = jwt.sign({},process.env.tkn);
+    userloginmodel.findOneAndUpdate({email:email},{token:token}).then(user =>{
+        if(!user){
+            res.statusCode = 401;
+            return res.json('no account exist');
         }
-        return res.json('incorrect email/pass')
-    }) 
-    .catch(err=>{
-        console.log(err);
+        bcrypt.compare(pass,user.pass).then(result=>{
+            if(result){
+                res.statusCode = 201;
+                return res.json('welcome');
+            }
+            res.statusCode = 301;
+            res.json('incorrect pass');
+        })
+        .catch(err=>{
+            console.log(err);
+        })
     })
-    
 }
