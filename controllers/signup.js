@@ -15,6 +15,7 @@ const transport = nodemailer.createTransport(sendgrid({
 exports.signupreq = async(req , res ,next)=>{
     const name = req.body.name;
     const email = req.body.email;
+    console.log(name);
     console.log(email);
     userdata.findOne({email:email}).then(result =>{
         if(result){
