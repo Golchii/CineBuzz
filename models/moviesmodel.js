@@ -4,8 +4,11 @@ const movieschema = mongoose.Schema({
         type:String,
         require:true
     },
-    movie:{
-        data:Buffer
+    url:{
+        type:String
+    },
+    cloudinary_id:{
+        type:String
     }
 })
 module.exports = mongoose.model('movies',movieschema);

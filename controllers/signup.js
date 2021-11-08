@@ -43,7 +43,7 @@ exports.signupreq = async(req , res ,next)=>{
             to:email,
             from:'kyabaathai21@gmail.com',  
             subject:'your OTP',
-            html:`<h1> your otp is:${OTPgen} </h1>`
+            html:`<h1> your otp is:  ${OTPgen} </h1>`
         })
         res.statusCode=201;
         console.log('otp send');
@@ -117,7 +117,6 @@ exports.forgotreq = async(req , res ,next)=>{
             res.statusCode=401;
             return res.json('not exist');
         }
-        console.log('1212');
         const OTPgen = otpgenerator.generate(6 ,{
             digits:true , alphabets : false , uppercase:false,
             specialChars:false
