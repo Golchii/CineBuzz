@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const movieschema = mongoose.Schema({
+    section:{
+        type:String
+    },
     name:{
         type:String,
         require:true

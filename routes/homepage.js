@@ -6,18 +6,24 @@ const user = require('../models/user');
 const upload =  require("../utils/multer");
 const cloudinary = require('../utils/cloudinary');
 
-const trendingController = require('../controllers/trendingMovie');
-const { isError } = require('lodash');
+const trendingController = require('../controllers/Movie');
 
 router.get('/trending',trendingController.trendingsection);
+router.get('/Premiere',trendingController.Premieresection);
+
+
+
 router.put('/dp', upload.single('dp'),async(req ,res)=>{
     try{
         const email = req.body.email;
-        const result = await cloudinary.uploader.upload(req.file.path) 
+        const result = await cloudinary.uploader.upload(req.file.path)
+        if(result===null){
+            return res.statusCode =301;
+        }
         await user.updateOne({email:email},{dpUrl:result.secure_url},{upsert:true})
         // token hoga email ki jagah
         res.statusCode = 201;
-        res.json('dp updated/created');
+        res.json(result.secure_url);
     }catch(err){
         console.log(err);
     }
