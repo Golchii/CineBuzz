@@ -1,6 +1,6 @@
 const movieModel = require('../models/moviesmodel');
 exports.trendingsection = async(req ,res ,next)=>{
-    movieModel.find({section:'trending'} ,(err ,item)=>{
+    movieModel.find((err ,item)=>{
         if(err){
             console.log(err);
         }
