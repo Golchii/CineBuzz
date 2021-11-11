@@ -17,14 +17,12 @@ router.put('/dp', upload.single('dp'),async(req ,res)=>{
     try{
         const email = req.body.email;
         const result = await cloudinary.uploader.upload(req.file.path)
-        if(result===null){
-            return res.statusCode =301;
-        }
         await user.updateOne({email:email},{dpUrl:result.secure_url},{upsert:true})
         // token hoga email ki jagah
         res.statusCode = 201;
         res.json(result.secure_url);
     }catch(err){
+        res.statusCode = 301;
         console.log(err);
     }
 })
