@@ -9,7 +9,7 @@ userloginschema = new mongoose.Schema({
     pass:{
         type: String,
     },
-    confirmpass:{
+    dpUrl:{
         type:String
     },
     token:{

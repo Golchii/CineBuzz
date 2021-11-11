@@ -13,11 +13,11 @@ exports.loginReq = async(req , res , next)=>{
         bcrypt.compare(pass,user.pass).then(result=>{
             if(result){
                 res.statusCode = 201;
-                return res.json('welcome');
+                return res.json(user);
             }
             res.statusCode = 301;
             res.json('incorrect pass');
-        })
+        })  
         .catch(err=>{
             console.log(err);
         })
