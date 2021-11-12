@@ -29,5 +29,5 @@ app.use(saveRoutes);
 
 mongoose.connect(process.env.db,()=>{
     console.log('connected');
-    app.listen(3000);
+    app.listen(process.env.port);
 });
