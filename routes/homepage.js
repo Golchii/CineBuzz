@@ -6,13 +6,15 @@ const user = require('../models/user');
 const upload =  require("../utils/multer");
 const cloudinary = require('../utils/cloudinary');
 
-const trendingController = require('../controllers/Movie');
+const movieController = require('../controllers/Movie');
+//routes
 
-router.get('/trending',trendingController.trendingsection);
-router.get('/Premiere',trendingController.Premieresection);
+router.get('/trending',movieController.trendingsection);
+router.get('/Premiere',movieController.Premieresection);
 
 
 
+//upload dp
 router.put('/dp', upload.single('dp'),async(req ,res)=>{
     try{
         const email = req.body.email;

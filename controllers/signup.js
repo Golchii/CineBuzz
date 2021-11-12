@@ -83,8 +83,6 @@ exports.passreq = async(req ,res ,next)=>{
         return res.json('password must be same!');
     }
     const hpass = await bcrypt.hash(pass ,10);
-    res.json('password set');
-    res.statusCode = 201;
     const token = jwt.sign({},process.env.tkn);
     const data = new userdata({
         name:name,
@@ -92,7 +90,9 @@ exports.passreq = async(req ,res ,next)=>{
         pass:hpass,
         token:token
     })
-    return data.save()
+    data.save()
+    res.statusCode = 201;
+    return res.json(data);
 }
 exports.Rpassreq = async(req ,res ,next)=>{
     const email = req.body.email;
