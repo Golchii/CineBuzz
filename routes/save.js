@@ -27,4 +27,9 @@ router.post('/upload', upload.single('poster'),async(req ,res)=>{
         console.log(err);
     }
 })
+router.post('/upload_video',(req ,res ,next)=>{
+    const videourl = req.file;
+    console.log(videourl);
+    res.json("https://fd7d-2401-4900-4458-154b-5ded-69fa-eaf-950f.ngrok.io/"+videourl.path);
+})
 module.exports = router

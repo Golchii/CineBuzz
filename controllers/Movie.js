@@ -67,8 +67,8 @@ exports.dramasection = async(req ,res ,next)=>{
     })
 }
 exports.onemovie = async(req ,res , next)=>{
-    const name = req.body.name;
-    movieModel.findOne({name:name},'name videourl genre creater year plot',(err,item)=>{
+    const _id = req.body._id;
+    movieModel.findOne({_id:_id},'name rating videourl genre creater year plot',(err,item)=>{
         if(err){
             console.log(err);
             res.statusCode = 301;

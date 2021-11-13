@@ -16,6 +16,15 @@ const { onemovie } = require('./controllers/Movie');
 
 const app = express();
 app.use(express.json());
+app.use('/video',express.static(__dirname+'/video'));
+const filestorage = multer.diskStorage({
+    destination:(req ,file ,cb)=>{
+        cb(null ,'video')
+    },
+    filename: (req,file ,cb)=>{
+        cb(null ,file.originalname);
+    }
+});
 
 app.use((req ,res ,next)=>{
     res.setHeader('Access-Control-Allow-Origin','*');
@@ -24,7 +33,7 @@ app.use((req ,res ,next)=>{
     res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
     next();
 })
-
+app.use(multer({storage:filestorage}).single('video'))
 app.use(authRoutes);
 app.use(homepageRoutes);
 app.use(onemovieRoutes);

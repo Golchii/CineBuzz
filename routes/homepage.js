@@ -11,8 +11,10 @@ const movieController = require('../controllers/Movie');
 
 router.get('/trending',movieController.trendingsection);
 router.get('/Premiere',movieController.Premieresection);
-
-
+router.get('/action',movieController.actionsection);
+router.get('/comedy',movieController.comedysection);
+router.get('/horror',movieController.horrersection);
+router.get('/drama',movieController.dramasection);
 
 //upload dp
 router.put('/dp', upload.single('dp'),async(req ,res)=>{

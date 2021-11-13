@@ -5,7 +5,7 @@ exports.loginReq = async(req , res , next)=>{
     const email = req.body.email;
     const pass = req.body.pass;
     const token = jwt.sign({},process.env.tkn);
-    userloginmodel.findOneAndUpdate({email:email},{token:token}).then(user =>{
+    userloginmodel.findOne({email:email}).then(user =>{
         if(!user){
             res.statusCode = 401;
             return res.json('no account exist');
@@ -13,7 +13,7 @@ exports.loginReq = async(req , res , next)=>{
         bcrypt.compare(pass,user.pass).then(result=>{
             if(result){
                 res.statusCode = 201;
-                return res.json(user);
+                return res.json(token);
             }
             res.statusCode = 301;
             res.json('incorrect pass');

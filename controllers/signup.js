@@ -87,12 +87,11 @@ exports.passreq = async(req ,res ,next)=>{
     const data = new userdata({
         name:name,
         email:email,
-        pass:hpass,
-        token:token
+        pass:hpass
     })
     data.save()
     res.statusCode = 201;
-    return res.json(data);
+    return res.json(token);
 }
 exports.Rpassreq = async(req ,res ,next)=>{
     const email = req.body.email;
@@ -106,7 +105,8 @@ exports.Rpassreq = async(req ,res ,next)=>{
     res.json('password set');
     res.statusCode = 201;
     const token = jwt.sign({},process.env.tkn); 
-    return userdata.updateMany({email:email},{pass:hpass,token:token});
+    res.json(token);
+    return userdata.updateMany({email:email},{pass:hpass});
 }
 exports.forgotreq = async(req , res ,next)=>{
     const email = req.body.email;
