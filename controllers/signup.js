@@ -93,7 +93,7 @@ exports.passreq = async(req ,res ,next)=>{
     res.statusCode = 201;
     return res.json(token);
 }
-exports.Rpassreq = async(req ,res ,next)=>{
+exports.Resetpassreq = async(req ,res ,next)=>{
     const email = req.body.email;
     const pass = req.body.pass;
     const confirmpass = req.body.confirmpass;

@@ -16,5 +16,5 @@ router.post('/forgot',signupController.forgotreq);
 router.post('/signup',signupController.signupreq);
 router.post('/otp',signupController.otpreq);
 router.put('/password',signupController.passreq)
-router.put('/resetpass',signupController.Rpassreq);
+router.put('/resetpass',signupController.Resetpassreq);
 module.exports = router;

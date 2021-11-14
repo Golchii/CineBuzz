@@ -12,6 +12,7 @@ const moviesmodel = require('./models/moviesmodel');
 const cloudinary = require('./utils/cloudinary');
 const upload = require('./utils/multer');
 const saveRoutes = require('./routes/save');
+const searchRoutes = require('./routes/search');
 const { onemovie } = require('./controllers/Movie');
 
 const app = express();
@@ -37,6 +38,7 @@ app.use(multer({storage:filestorage}).single('video'))
 app.use(authRoutes);
 app.use(homepageRoutes);
 app.use(onemovieRoutes);
+app.use(searchRoutes);
 app.use(saveRoutes);
 
 mongoose.connect(process.env.db,()=>{
