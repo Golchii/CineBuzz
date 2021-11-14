@@ -11,6 +11,7 @@ const moviesmodel = require('./models/moviesmodel');
 const cloudinary = require('./utils/cloudinary');
 const upload = require('./utils/multer');
 const saveRoutes = require('./routes/save');
+const searchRoutes = require('./routes/search');
 
 const app = express();
 app.use(express.json());
@@ -26,7 +27,7 @@ app.use((req ,res ,next)=>{
 app.use(authRoutes);
 app.use(homepageRoutes);
 app.use(saveRoutes);
-
+app.use(searchRoutes);
 mongoose.connect(process.env.db,()=>{
     console.log('connected');
     app.listen(process.env.port);
