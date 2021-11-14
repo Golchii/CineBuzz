@@ -7,7 +7,7 @@ const movieschema = mongoose.Schema({
     name:{
         type:String,
     },
-    posterurl:{
+     posterurl:{
         type:String
     },
     SrNo:{
