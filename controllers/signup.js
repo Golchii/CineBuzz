@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const sendgrid = require('nodemailer-sendgrid-transport');
 const dotenv = require('dotenv/config');
 const otpgenerator = require('otp-generator');
-const user = require('../models/user');
 const transport = nodemailer.createTransport(sendgrid({
     auth: {
         api_key: process.env.API
@@ -89,15 +88,18 @@ exports.passreq = async(req ,res ,next)=>{
         email:email,
         pass:hpass
     })
-    const userdetails = {
-        name:name,
-        email:email,
-        token:token
-    }
-    res.statusCode = 201;
-    data.save();
-    console.log(userdetails)
-    return res.json(userdetails);
+    await data.save();
+    userdata.findOne({email:email}).then(user=>{
+        const userdetails = {
+            id:user._id,
+            name:name,
+            email:email,
+            token:token
+        }
+        res.statusCode = 201;
+        console.log(userdetails)
+        return res.json(userdetails);
+    })
 }
 exports.Resetpassreq = async(req ,res ,next)=>{
     const email = req.body.email;
@@ -112,6 +114,7 @@ exports.Resetpassreq = async(req ,res ,next)=>{
     const token = jwt.sign({},process.env.TKN); 
     return userdata.findOneAndUpdate({email:email},{pass:hpass}).then(user =>{
         const userdetails = {
+            id:user._id,
             name:user.name,
             email:email,
             token:token

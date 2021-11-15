@@ -15,11 +15,12 @@ let upload = multer({storage:storage});
 router.post('/upload',upload.single('video'),function(req,res,next){
     const fileinfo = req.file;
     const movie = new movieModel({
-        name:req.body.name,
         section:req.body.section,
-        creater:req.body.creater,
-        year:req.body.year,
+        name:req.body.name,
         poster:fileinfo.path,
+        genre:req.body.genre,
+        creater:req.body.creater,
+        plot:req.body.plot,
     });
     movie.save();
     res.json('asdasdasd');

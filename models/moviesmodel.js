@@ -13,9 +13,6 @@ const movieschema = mongoose.Schema({
     SrNo:{
         type:Number
     },
-    name:{
-        type:String
-    },
     video:{
         type:String
     },

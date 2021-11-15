@@ -2,7 +2,7 @@ const { size } = require('lodash');
 const movieModel = require('../models/moviesmodel');
 const user = require('../models/user');
 exports.trendingsection = async(req ,res ,next)=>{
-    movieModel.find({section:'Trending'},'url posterurl name',(err ,item)=>{
+    movieModel.find({section:'Trending'},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
         }
@@ -14,7 +14,7 @@ exports.trendingsection = async(req ,res ,next)=>{
 }
 
 exports.Premieresection = async(req , res ,next)=>{
-    movieModel.find({section:'Premiere'},'url posterurl name',(err ,item)=>{
+    movieModel.find({section:'Premiere'},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
         }
@@ -25,7 +25,7 @@ exports.Premieresection = async(req , res ,next)=>{
     })
 }
 exports.actionsection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Action'},'url posterurl name',(err ,item)=>{
+    movieModel.find({genre:'Action'},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
         }
@@ -36,7 +36,7 @@ exports.actionsection = async(req ,res ,next)=>{
     })
 }
 exports.comedysection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Comedy'},'url posterurl name',(err ,item)=>{
+    movieModel.find({genre:'Comedy'},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
         }
@@ -47,7 +47,7 @@ exports.comedysection = async(req ,res ,next)=>{
     })
 }
 exports.horrersection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Horrer'},'url posterurl name',(err ,item)=>{
+    movieModel.find({genre:'Horrer'},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
         }
@@ -58,7 +58,7 @@ exports.horrersection = async(req ,res ,next)=>{
     })
 }
 exports.dramasection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Drama'},'url posterurl name',(err ,item)=>{
+    movieModel.find({genre:'Drama'},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
         }
@@ -70,7 +70,7 @@ exports.dramasection = async(req ,res ,next)=>{
 }
 exports.onemovie = async(req ,res , next)=>{
     const _id = req.body._id;
-    movieModel.findOne({_id:_id},'name rating posterurl videourl genre creater year plot',(err,item)=>{
+    movieModel.findOne({_id:_id},'name poster video genre creater plot',(err,item)=>{
         if(err){
             console.log(err);
             res.statusCode = 301;
@@ -157,7 +157,7 @@ exports.onemovieReview = async(req ,res ,next)=>{
         let x = true;
         for(var k=0 ; k< size(item.reviewArr); k++){
             if(userid===item.reviewArr[k].userid){
-                item.reviewArr[k].rating = rating;
+                item.reviewArr[k].review = review;
                 item.save();
                 x=false;
             }
@@ -178,27 +178,40 @@ exports.onemovieReviewshow=async(req,res,next)=>{
 exports.onemovieWishlist = async(req,res,next)=>{
     const Movieid =req.body.Movieid;
     const userid = req.body.userid;
-    const list = {
-        Movieid:Movieid,
-        wishlist:1
-    }
     user.findOne({_id:userid},(err,item)=>{
         let x = true;
+        console.log(size(item.wishlistArr));
         for(let k =0 ; k<size(item.wishlistArr);k++){
-            if(Movieid===item.wishlistArr[k].Movieid){
+            if(Movieid===item.wishlistArr[k]){
                 console.log("again");
-                if(item.wishlistArr[k].wishlist===1){
-                    item.wishlistArr[k].wishlist=0;
-                }
-                else{
-                    item.wishlistArr[k].wishlist=1;
-                }
+                item.wishlistArr.pop();
+                res.json('removed from wishlist')
+                res.statusCode = 301;
                 x=false;
+                item.save()
             }
         }
         if(x===true){
-            item.wishlistArr.push()
+            item.wishlistArr.push(Movieid);
+            res.statusCode =201;
+            res.json('added to wishlist')
             item.save();
         }
     })
+}
+exports.onemovieWishlistshow = async(req,res,next)=>{
+    const Movieid =req.body.Movieid;
+    const userid = req.body.userid;
+    user.findOne({_id:userid},(err,item)=>{
+        let x = true;
+        for(let k =0 ; k<size(item.wishlistArr);k++){
+            if(Movieid===item.wishlistArr[k]){
+                res.json(1);
+                x = false;
+            }
+        }
+        if(x===true){
+            res.json(0);
+        }
+    });
 }

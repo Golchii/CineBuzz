@@ -14,6 +14,7 @@ exports.loginReq = async(req , res , next)=>{
             if(result){
                 res.statusCode = 201;
                 const userdetails = {
+                    id:user._id,
                     name:user.name,
                     email:email,
                     token:token
