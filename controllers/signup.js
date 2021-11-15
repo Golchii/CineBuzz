@@ -9,7 +9,7 @@ const otpgenerator = require('otp-generator');
 const user = require('../models/user');
 const transport = nodemailer.createTransport(sendgrid({
     auth: {
-        api_key: process.env.api
+        api_key: process.env.API
     }
 }))  
 exports.signupreq = async(req , res ,next)=>{
@@ -83,7 +83,7 @@ exports.passreq = async(req ,res ,next)=>{
         return res.json('password must be same!');
     }
     const hpass = await bcrypt.hash(pass ,10);
-    const token = jwt.sign({},process.env.tkn);
+    const token = jwt.sign({},process.env.TKN);
     const data = new userdata({
         name:name,
         email:email,
@@ -109,7 +109,7 @@ exports.Resetpassreq = async(req ,res ,next)=>{
     }
     const hpass = await bcrypt.hash(pass ,10);
     console.log('password set');
-    const token = jwt.sign({},process.env.tkn); 
+    const token = jwt.sign({},process.env.TKN); 
     return userdata.findOneAndUpdate({email:email},{pass:hpass}).then(user =>{
         const userdetails = {
             name:user.name,

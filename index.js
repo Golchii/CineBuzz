@@ -32,7 +32,7 @@ app.use(homepageRoutes);
 app.use(onemovieRoutes);
 app.use(searchRoutes);
 app.use(saveRoutes);
-mongoose.connect(process.env.db,()=>{
+mongoose.connect(process.env.DB,()=>{
     console.log('connected');
-    app.listen(process.env.port);
+    app.listen(process.env.PORT);
 });

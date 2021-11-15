@@ -4,7 +4,7 @@ const userloginmodel = require('../models/user');
 exports.loginReq = async(req , res , next)=>{ 
     const email = req.body.email;
     const pass = req.body.pass;
-    const token = jwt.sign({},process.env.tkn);
+    const token = jwt.sign({},process.env.TKN);
     userloginmodel.findOne({email:email}).then(user =>{
         if(!user){
             res.statusCode = 401;
