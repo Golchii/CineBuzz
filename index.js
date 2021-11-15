@@ -13,11 +13,12 @@ const cloudinary = require('./utils/cloudinary');
 const upload = require('./utils/multer');
 const saveRoutes = require('./routes/save');
 const searchRoutes = require('./routes/search');
+const cors =require('cors');
 
 const app = express();
 app.use(express.json());
 app.use('/video',express.static(__dirname+'/video'));
-
+app.use(cors());
 app.use((req ,res ,next)=>{
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Methods',
