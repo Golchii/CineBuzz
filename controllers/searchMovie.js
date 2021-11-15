@@ -1,5 +1,6 @@
 const movieModel = require('../models/moviesmodel');
 exports.search =async(req ,res ,next)=>{
+    console.log(req.body.name);
     movieModel.find({name:{$regex:req.body.name,$options: "i"}},'name',(err,item)=>{
         if(err){
             res.json(err);
@@ -9,5 +10,5 @@ exports.search =async(req ,res ,next)=>{
             res.json(item)
             console.log(item);
         }
-    }).sort({item:asc});
+    }).sort({item:1});
 } 

@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { array } = require('../utils/multer');
+
 userloginschema = new mongoose.Schema({
     name:{
         type:String
@@ -14,6 +16,7 @@ userloginschema = new mongoose.Schema({
     },
     token:{
         type:String
-    }
+    },
+    ratingArr:[{Movieid:String,rating:String}]
 });
 module.exports = mongoose.model('user',userloginschema);

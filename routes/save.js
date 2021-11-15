@@ -1,35 +1,36 @@
 const router = require('express').Router();
+const path = require('path');
 const cloudinary = require('../utils/cloudinary');
 const movieModel =  require('../models/moviesmodel')
-const upload =  require("../utils/multer");
-router.post('/upload', upload.single('poster'),async(req ,res)=>{
-    try{
-        const result = await cloudinary.uploader.upload(req.file.path)
-        
-        const movie = new movieModel({
-            section:req.body.section,
-            name:req.body.name,
-            posterurl:result.secure_url,
-            SrNo:req.body.SrNo,
-            genre:req.body.genre,
-            creater:req.body.creater,
-            year:req.body.year,
-            plot:req.body.plot,
-            rating:req.body.rating,
-            videourl:req.body.videourl,
-            cloudinary_id:result.public_id
-        })
-        console.log(movie);
-        res.json(movie)
-        await movie.save();
-        
-    }catch(err){
-        console.log(err);
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination:(req ,file ,cb)=>{
+        cb(null ,'video')
+    },
+    filename: (req,file ,cb)=>{
+        cb(null ,file.originalname);
     }
-})
-router.post('/upload_video',(req ,res ,next)=>{
-    const videourl = req.file;
-    console.log(videourl);
-    res.json("https://fd7d-2401-4900-4458-154b-5ded-69fa-eaf-950f.ngrok.io/"+videourl.path);
-})
+});
+let upload = multer({storage:storage});
+router.post('/upload',upload.single('video'),function(req,res,next){
+    const fileinfo = req.file;
+    const movie = new movieModel({
+        name:req.body.name,
+        section:req.body.section,
+        creater:req.body.creater,
+        year:req.body.year,
+        poster:fileinfo.path,
+    });
+    movie.save();
+    res.json('asdasdasd');
+    console.log(movie);
+});
+router.put('/upload_video',upload.single('video'),async function(req,res,next){
+    const fileinfo = req.file;
+    const name = req.body.name;
+    const result = await movieModel.findOne({name:name});
+    result.video = fileinfo.path;
+    result.save();
+    res.json('video saved');
+});
 module.exports = router

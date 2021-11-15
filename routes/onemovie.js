@@ -8,6 +8,7 @@ const movieModel = require('../models/moviesmodel');
 const movieController = require('../controllers/Movie');
 //routes
 router.post('/movie',movieController.onemovie)
-
+router.put('/movie/rating',movieController.onemovieRating);
+router.post('/movie/rating',movieController.onemovieRatingshow);
 
 module.exports = router;

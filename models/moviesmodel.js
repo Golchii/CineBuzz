@@ -7,7 +7,7 @@ const movieschema = mongoose.Schema({
     name:{
         type:String,
     },
-     posterurl:{
+    poster:{
         type:String
     },
     SrNo:{
@@ -16,7 +16,7 @@ const movieschema = mongoose.Schema({
     name:{
         type:String
     },
-    videourl:{
+    video:{
         type:String
     },
     genre:{
@@ -31,9 +31,7 @@ const movieschema = mongoose.Schema({
     plot:{
         type:String
     },
-    rating:{
-        type:Number
-    },
+    ratingArr:[{userid:String,rating:Number}],
     cloudinary_id:{
         type:String
     }

@@ -15,13 +15,14 @@ router.get('/action',movieController.actionsection);
 router.get('/comedy',movieController.comedysection);
 router.get('/horror',movieController.horrersection);
 router.get('/drama',movieController.dramasection);
+router.post('/random',movieController.randomfxn);
 
 //upload dp
 router.put('/dp', upload.single('dp'),async(req ,res)=>{
     try{
         const email = req.body.email;
         const result = await cloudinary.uploader.upload(req.file.path)
-        await user.updateOne({email:email},{dpUrl:result.secure_url},{upsert:true})
+        user.updateOne({email:email},{dpUrl:result.secure_url},{upsert:true})
         // token hoga email ki jagah
         res.statusCode = 201;
         res.json(result.secure_url);

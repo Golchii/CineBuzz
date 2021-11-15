@@ -89,9 +89,15 @@ exports.passreq = async(req ,res ,next)=>{
         email:email,
         pass:hpass
     })
-    data.save()
+    const userdetails = {
+        name:name,
+        email:email,
+        token:token
+    }
     res.statusCode = 201;
-    return res.json(token);
+    data.save();
+    console.log(userdetails)
+    return res.json(userdetails);
 }
 exports.Resetpassreq = async(req ,res ,next)=>{
     const email = req.body.email;
@@ -102,11 +108,17 @@ exports.Resetpassreq = async(req ,res ,next)=>{
         return res.json('password must be same!');
     }
     const hpass = await bcrypt.hash(pass ,10);
-    res.json('password set');
-    res.statusCode = 201;
+    console.log('password set');
     const token = jwt.sign({},process.env.tkn); 
-    res.json(token);
-    return userdata.updateMany({email:email},{pass:hpass});
+    return userdata.findOneAndUpdate({email:email},{pass:hpass}).then(user =>{
+        const userdetails = {
+            name:user.name,
+            email:email,
+            token:token
+        }
+        res.statusCode = 201;
+        res.json(userdetails);
+    })
 }
 exports.forgotreq = async(req , res ,next)=>{
     const email = req.body.email;
