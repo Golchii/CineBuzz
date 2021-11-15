@@ -175,3 +175,30 @@ exports.onemovieReviewshow=async(req,res,next)=>{
         res.statusCode = 201;
     })
 }
+exports.onemovieWishlist = async(req,res,next)=>{
+    const Movieid =req.body.Movieid;
+    const userid = req.body.userid;
+    const list = {
+        Movieid:Movieid,
+        wishlist:1
+    }
+    user.findOne({_id:userid},(err,item)=>{
+        let x = true;
+        for(let k =0 ; k<size(item.wishlistArr);k++){
+            if(Movieid===item.wishlistArr[k].Movieid){
+                console.log("again");
+                if(item.wishlistArr[k].wishlist===1){
+                    item.wishlistArr[k].wishlist=0;
+                }
+                else{
+                    item.wishlistArr[k].wishlist=1;
+                }
+                x=false;
+            }
+        }
+        if(x===true){
+            item.wishlistArr.push()
+            item.save();
+        }
+    })
+}
