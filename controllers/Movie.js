@@ -145,3 +145,33 @@ exports.randomfxn = async(req , res , next)=>{
         res.json(item[x]);
     });
 }
+exports.onemovieReview = async(req ,res ,next)=>{
+    const userid = req.body.userid;
+    const Movieid = req.body.Movieid;
+    const review = req.body.review;
+    const list = {
+        userid:userid,
+        review:review
+    }
+    movieModel.findOne({_id:Movieid},(err,item)=>{
+        let x = true;
+        for(var k=0 ; k< size(item.reviewArr); k++){
+            if(userid===item.reviewArr[k].userid){
+                item.reviewArr[k].rating = rating;
+                item.save();
+                x=false;
+            }
+        }
+        if(x===true){
+            item.reviewArr.push(list);
+            item.save();
+        }
+    })
+}
+exports.onemovieReviewshow=async(req,res,next)=>{
+    movieModel.find({_id:req.body.Movieid},(err,item)=>{
+        console.log(item[0].reviewArr);
+        res.json(item[0].reviewArr)
+        res.statusCode = 201;
+    })
+}

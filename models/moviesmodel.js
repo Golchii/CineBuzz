@@ -32,8 +32,6 @@ const movieschema = mongoose.Schema({
         type:String
     },
     ratingArr:[{userid:String,rating:Number}],
-    cloudinary_id:{
-        type:String
-    }
+    reviewArr:[{userid:String,review:String}],
 })
 module.exports = mongoose.model('movies',movieschema);
