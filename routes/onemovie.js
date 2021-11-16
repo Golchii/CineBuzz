@@ -10,5 +10,9 @@ const movieController = require('../controllers/Movie');
 router.post('/movie',movieController.onemovie)
 router.put('/movie/rating',movieController.onemovieRating);
 router.post('/movie/rating',movieController.onemovieRatingshow);
+router.put('/movie/review',movieController.onemovieReview);
+router.post('/movie/review',movieController.onemovieReviewshow);
+router.put('/movie/wishlist',movieController.onemovieWishlist);
+router.post('/movie/wishlist',movieController.onemovieWishlistshow)
 
 module.exports = router;
