@@ -88,9 +88,9 @@ exports.onemovieRatingshow=async(req,res,next)=>{
         for(l = 0; l<size(item[0].ratingArr);l++){
             sum= sum + item[0].ratingArr[l].rating
         }
+        res.statusCode = 201;
         console.log(sum/l);
         res.json(sum/l);
-        res.statusCode = 201;
     })
 }
 exports.onemovieRating = async(req , res ,next)=>{
@@ -116,13 +116,16 @@ exports.onemovieRating = async(req , res ,next)=>{
             item.save();
         }
     })
+    res.statusCode =201;
     res.json('done');
 }
-var arr=[];
+exports.refreshArr = async(req,res,next)=>{
+    var arr=[];
+}
 exports.randomfxn = async(req , res , next)=>{
     movieModel.find({genre:req.body.genre},(err ,item)=>{
         s = size(item);
-        
+        console.log(arr);
         var x = Math.floor(Math.random()*(s));
         var i=0;
         for(i = 0 ; i < size(arr) ; i++){
