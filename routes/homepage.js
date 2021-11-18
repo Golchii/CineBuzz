@@ -17,6 +17,8 @@ router.get('/horror',movieController.horrersection);
 router.get('/drama',movieController.dramasection);
 router.post('/random',movieController.randomfxn);
 router.get('/refreshlist',movieController.refreshArr);
+router.post('/wishlist',movieController.Allwishlist);
+router.post('/history',movieController.history);
 
 //upload dp
 router.put('/dp', upload.single('dp'),async(req ,res)=>{

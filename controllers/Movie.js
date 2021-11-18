@@ -119,13 +119,14 @@ exports.onemovieRating = async(req , res ,next)=>{
     res.statusCode =201;
     res.json('done');
 }
+var arr=[];
 exports.refreshArr = async(req,res,next)=>{
-    var arr=[];
+    arr=[];
+    res.json('done');
 }
 exports.randomfxn = async(req , res , next)=>{
     movieModel.find({genre:req.body.genre},(err ,item)=>{
         s = size(item);
-        console.log(arr);
         var x = Math.floor(Math.random()*(s));
         var i=0;
         for(i = 0 ; i < size(arr) ; i++){
@@ -161,21 +162,49 @@ exports.onemovieReview = async(req ,res ,next)=>{
         for(var k=0 ; k< size(item.reviewArr); k++){
             if(userid===item.reviewArr[k].userid){
                 item.reviewArr[k].review = review;
+                res.json('review edited')
                 item.save();
                 x=false;
             }
         }
         if(x===true){
             item.reviewArr.push(list);
+            res.json('review saved')
             item.save();
         }
+        res.statusCode = 201;
     })
 }
 exports.onemovieReviewshow=async(req,res,next)=>{
-    movieModel.find({_id:req.body.Movieid},(err,item)=>{
-        console.log(item[0].reviewArr);
-        res.json(item[0].reviewArr)
-        res.statusCode = 201;
+    const Movieid = req.body.Movieid;
+    const Arr = [];
+    movieModel.findOne({_id:Movieid},(err,item)=>{
+        const userReview = item.reviewArr;
+        const userRating = item.ratingArr;
+        Arr.push(userReview,userRating);
+        console.log(Arr);
+        res.json(Arr);
+    })
+}
+exports.history = async(req ,res ,next)=>{
+    const userid = req.body.userid;
+    const Movieid = req.body.Movieid;
+    user.findOne({_id:userid},(err,item)=>{
+        let x = true;
+        for(let k = 0 ; k < size(item.history) ; k++){
+            if(Movieid===item.history[k]){
+                console.log('again');
+                res.statusCode = 301;
+                res.json('again');
+                x = false;
+            }
+        }
+        if(x===true){
+            item.history.push(Movieid);
+            res.statusCode = 201;
+            res.json('added in history');
+            item.save();
+        }
     })
 }
 exports.onemovieWishlist = async(req,res,next)=>{
@@ -188,8 +217,8 @@ exports.onemovieWishlist = async(req,res,next)=>{
             if(Movieid===item.wishlistArr[k]){
                 console.log("again");
                 item.wishlistArr.pop();
-                res.json('removed from wishlist')
                 res.statusCode = 301;
+                res.json('removed from wishlist')
                 x=false;
                 item.save()
             }
@@ -217,4 +246,12 @@ exports.onemovieWishlistshow = async(req,res,next)=>{
             res.json(0);
         }
     });
+}
+exports.Allwishlist = async (req ,res,next)=>{
+    const userid = req.body.userid;
+    user.findOne({_id:userid},(err,item)=>{
+        console.log(item.wishlistArr);
+        res.statusCode = 201;
+        res.json(item.wishlistArr);
+    })
 }

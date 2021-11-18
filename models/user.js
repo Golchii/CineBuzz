@@ -17,6 +17,7 @@ userloginschema = new mongoose.Schema({
     token:{
         type:String
     },
-    wishlistArr:[String]
+    wishlistArr:[String],
+    history:[String]
 });
 module.exports = mongoose.model('user',userloginschema);
