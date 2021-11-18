@@ -238,12 +238,12 @@ exports.onemovieWishlistshow = async(req,res,next)=>{
         let x = true;
         for(let k =0 ; k<size(item.wishlistArr);k++){
             if(Movieid===item.wishlistArr[k]){
-                res.json(1);
+                res.json("1");
                 x = false;
             }
         }
         if(x===true){
-            res.json(0);
+            res.json("0");
         }
     });
 }
