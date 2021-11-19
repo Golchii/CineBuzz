@@ -23,6 +23,7 @@ router.post('/movie/history',movieController.history);
 router.post('/history',movieController.showHistory);
 router.post('/count',movieController.movieCount);
 router.post('/delete/history',movieController.deleteHistory);
+router.post('/feedback',movieController.feedback);
 
 
 //upload dp

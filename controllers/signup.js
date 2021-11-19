@@ -154,7 +154,7 @@ exports.forgotreq = async(req , res ,next)=>{
             to:email,
             from:'kyabaathai21@gmail.com',  
             subject:'your OTP',
-            html:`<h1> your otp is:${OTPgen} </h1>`
+            html:`<h3> your otp is:${OTPgen} </h3>`
         })
         res.statusCode=201;
         console.log('otp send');

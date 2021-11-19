@@ -1,6 +1,13 @@
 const { size, sortBy } = require('lodash');
 const { findOne } = require('../models/moviesmodel');
 const movieModel = require('../models/moviesmodel');
+const nodemailer = require('nodemailer');
+const sendgrid = require('nodemailer-sendgrid-transport');
+const transport = nodemailer.createTransport(sendgrid({
+    auth: {
+        api_key: process.env.API
+    }
+})) 
 
 const user = require('../models/user');
 exports.trendingsection = async(req ,res ,next)=>{
@@ -210,22 +217,26 @@ exports.onemovieReviewshow=async(req,res,next)=>{
 exports.history = async(req ,res ,next)=>{
     const userid = req.body.userid;
     const Movieid = req.body.Movieid;
-    user.findOne({_id:userid},(err,item)=>{
-        let x = true;
-        for(let k = 0 ; k < size(item.history) ; k++){
-            if(Movieid===item.history[k]){
-                console.log('again');
-                res.statusCode = 301;
-                res.json('again');
-                x = false;
+    movieModel.findOne({_id:Movieid},(err,result)=>{
+        result.views++;
+        result.save();
+        user.findOne({_id:userid},(err,item)=>{
+            let x = true;
+            for(let k = 0 ; k < size(item.history) ; k++){
+                if(Movieid===item.history[k]){
+                    console.log('again');
+                    res.statusCode = 301;
+                    res.json('again');
+                    x = false;
+                }
             }
-        }
-        if(x===true){
-            item.history.push(Movieid);
-            res.statusCode = 201;
-            res.json('added in history');
-            item.save();
-        }
+            if(x===true){
+                item.history.push(Movieid);
+                res.statusCode = 201;
+                res.json('added in history');
+                item.save();
+            }
+        })
     })
 }
 exports.showHistory = async (req , res ,next)=>{
@@ -302,6 +313,21 @@ exports.deleteHistory = async(req , res ,next)=>{
     })
     res.statusCode = 201;
     res.json('history cleared')
+}
+exports.feedback = async(req ,res,next)=>{
+    const email= req.body.email;
+    const feed = req.body.feed;
+    user.findOne({email:email}).then(result=>{
+        transport.sendMail({
+            to:email,
+            from:'kyabaathai21@gmail.com',  
+            subject:'Thankyou For Your Feedback',
+            html:`<h3> Thank you for taking the time to write this, and for pointing out these issues. We work hard to give all of our customers a great experience, and we want to keep improving. </h3>`
+        })
+        res.statusCode=201;
+        console.log('feedback send');
+        res.json("feedback send");
+    })
 }
 
 
