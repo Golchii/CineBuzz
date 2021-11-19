@@ -82,6 +82,7 @@ exports.onemovie = async(req ,res , next)=>{
             res.statusCode = 301;
         }
         else{
+            res.statusCode = 201;
             console.log(item);
             res.json(item);
         }
@@ -127,32 +128,41 @@ exports.onemovieRating = async(req , res ,next)=>{
 }
 var arr=[];
 exports.refreshArr = async(req,res,next)=>{
-    arr=[];
-    res.json('done');
+    user.findOne({_id:req.body.userid},(err,item)=>{
+        item.token = [];
+        item.save();
+        res.statusCode = 201;
+        res.json('done');
+    })
 }
 exports.randomfxn = async(req , res , next)=>{
-    movieModel.find({genre:req.body.genre},(err ,item)=>{
-        s = size(item);
+    const userid = req.body.userid;
+    movieModel.find({genre:req.body.genre},(err ,result)=>{
+        s = size(result);
         var x = Math.floor(Math.random()*(s));
-        var i=0;
-        for(i = 0 ; i < size(arr) ; i++){
-            console.log(arr);
-            if(size(arr)==s){
-                console.log('khatam');
-                arr=[];
-                res.statusCode=301;
-                return res.json('empty');
-            }
-            if(x==arr[i]){
-                console.log('loop')
-                x = Math.floor(Math.random()*(s));
-                console.log(x);
-                i=-1;
-            }
-        }
-        arr.push(x);
-        console.log(x);
-        res.json(item[x]);
+        user.findOne({_id:userid},(err,item)=>{
+            var i=0;
+            for(i = 0 ; i < size(item.token) ; i++){
+                console.log(item.token);
+                if(size(item.token)==s){ 
+                    console.log('khatam');
+                    item.token = [];
+                    item.save();
+                    res.statusCode=301;
+                    return res.json('empty');
+                }
+                if(x==item.token[i]){
+                    console.log('loop')
+                    x = Math.floor(Math.random()*(s));
+                    console.log(x);
+                    i=-1;
+                }
+            }  
+            item.token.push(x);
+            item.save();
+            console.log(x);
+            res.json(result[x]);
+        })
     });
 }
 exports.onemovieReview = async(req ,res ,next)=>{
@@ -292,4 +302,26 @@ exports.deleteHistory = async(req , res ,next)=>{
     })
     res.statusCode = 201;
     res.json('history cleared')
+}
+
+
+
+
+
+
+
+
+
+exports.appLink = async (req,res, next)=>{
+    const link = [{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+          "namespace": "android_app",
+          "package_name": "com.example.cinebuzz",
+          "sha256_cert_fingerprints":
+          ["B2:D1:EE:25:FD:3D:03:D5:2E:74:7B:88:CF:DE:B9:0D:D1:A8:0F:1F:BD:84:46:D8:CC:CF:AB:5A:74:96:13:1A"]
+        }
+      }];
+    res.statusCode = 201;  
+    res.json(link);
 }

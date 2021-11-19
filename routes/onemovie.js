@@ -17,4 +17,8 @@ router.post('/movie/wishlist',movieController.onemovieWishlistshow);
 router.post('/userdetails',movieController.userdetails)
 
 
+//applink
+router.get('/.well-known/assetlinks.json',movieController.appLink);
+
+
 module.exports = router;

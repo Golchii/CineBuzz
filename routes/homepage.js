@@ -17,7 +17,7 @@ router.get('/comedy',isAuth,movieController.comedysection);
 router.get('/horror',isAuth,movieController.horrersection);
 router.get('/drama',isAuth,movieController.dramasection);
 router.post('/random',isAuth,movieController.randomfxn);
-router.get('/refreshlist',movieController.refreshArr);
+router.post('/refreshlist',movieController.refreshArr);
 router.post('/wishlist',movieController.Allwishlist);
 router.post('/movie/history',movieController.history);
 router.post('/history',movieController.showHistory);

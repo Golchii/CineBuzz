@@ -14,9 +14,7 @@ userloginschema = new mongoose.Schema({
     dpUrl:{
         type:String
     },
-    token:{
-        type:String
-    },
+    token:[String],
     wishlistArr:[String],
     history:[String]
 });
