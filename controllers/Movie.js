@@ -1,9 +1,10 @@
 const { size, sortBy } = require('lodash');
 const { findOne } = require('../models/moviesmodel');
 const movieModel = require('../models/moviesmodel');
+
 const user = require('../models/user');
 exports.trendingsection = async(req ,res ,next)=>{
-    let a = [];
+    let a = [];;
     movieModel.find({},'poster name views',(err ,item)=>{
         if(err){
             console.log(err);

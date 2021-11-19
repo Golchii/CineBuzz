@@ -4,22 +4,21 @@ require('dotenv/config');
 module.exports = (req, res, next) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {
-    const error = new Error('Not authenticated.');
-    error.statusCode = 401;
-    throw error;
+    res.statusCode = 401
+    res.json('token required')
   }
   const token = authHeader.split(' ')[1];
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, process.env.TKN);
   } catch (err) {
-    err.statusCode = 500;
-    throw err;
+    err.statusCode = 503;
+    res.json('token expired')
   }
   if (!decodedToken) {
-    const error = new Error('Not authenticated.');
-    error.statusCode = 401;
-    throw error;
+    res.statusCode = 503;
+    res.json('token expired');
   }
+  req.email = decodedToken.email;
   next();
 };

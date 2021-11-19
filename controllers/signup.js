@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const sendgrid = require('nodemailer-sendgrid-transport');
 const dotenv = require('dotenv/config');
 const otpgenerator = require('otp-generator');
+const user = require('../models/user');
+const { result } = require('lodash');
 const transport = nodemailer.createTransport(sendgrid({
     auth: {
         api_key: process.env.API
@@ -82,7 +84,7 @@ exports.passreq = async(req ,res ,next)=>{
         return res.json('password must be same!');
     }
     const hpass = await bcrypt.hash(pass ,10);
-    const token = jwt.sign({},process.env.TKN);
+    const token = jwt.sign({email:email},process.env.TKN,{expiresIn:'1d'});
     const data = new userdata({
         name:name,
         email:email,
@@ -111,7 +113,7 @@ exports.Resetpassreq = async(req ,res ,next)=>{
     }
     const hpass = await bcrypt.hash(pass ,10);
     console.log('password set');
-    const token = jwt.sign({},process.env.TKN); 
+    const token = jwt.sign({email:email},process.env.TKN,{expiresIn:'1d'});
     return userdata.findOneAndUpdate({email:email},{pass:hpass}).then(user =>{
         const userdetails = {
             id:user._id,
@@ -157,5 +159,23 @@ exports.forgotreq = async(req , res ,next)=>{
         res.statusCode=201;
         console.log('otp send');
         res.json("otp send");
+    })
+}
+exports.changePassword = async(req,res,next)=>{
+    const email = req.body.email;
+    const oldPass = req.body.oldPass;
+    const newPass = req.body.newPass;
+    userdata.findOne({email:email},async(err,user)=>{
+        bcrypt.compare(oldPass,user.pass).then(async result=>{
+            if(result){
+                const hashpass = await bcrypt.hash(newPass ,10);
+                user.pass = hashpass;
+                user.save();
+                res.statusCode =201;
+                return res.json('password changed')
+            }
+            res.statusCode = 301;
+            return res.json('incorrect password')
+        })
     })
 }
