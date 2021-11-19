@@ -3,7 +3,6 @@ const express = require('express');
 
 const router = express.Router();
 const user = require('../models/user');
-const upload =  require("../utils/multer");
 const cloudinary = require('../utils/cloudinary');
 const multer = require('multer');
 
@@ -19,7 +18,10 @@ router.get('/drama',movieController.dramasection);
 router.post('/random',movieController.randomfxn);
 router.get('/refreshlist',movieController.refreshArr);
 router.post('/wishlist',movieController.Allwishlist);
-router.post('/history',movieController.history);
+router.post('/movie/history',movieController.history);
+router.post('/history',movieController.showHistory);
+router.post('/count',movieController.movieCount);
+router.post('/delete/history',movieController.deleteHistory);
 
 //upload dp
 const storage = multer.diskStorage({
@@ -30,10 +32,14 @@ const storage = multer.diskStorage({
         cb(null ,file.originalname);
     }
 });
-router.put('/dp', upload.single('dp'),async(req ,res)=>{
+let upload = multer({storage:storage});
+router.patch('/dp', upload.single('dp'),async(req ,res)=>{
     try{
         const email = req.body.email;
-        user.updateOne({email:email},{dpUrl:req.file.path},{upsert:true})
+        user.findOne({email:email},(err,item)=>{
+            item.dpUrl = req.file.path;
+            item.save();
+        })
         // token hoga email ki jagah
         res.statusCode = 201;
         res.json(req.file.path);

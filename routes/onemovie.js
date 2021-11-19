@@ -14,6 +14,6 @@ router.put('/movie/review',movieController.onemovieReview);
 router.post('/movie/review',movieController.onemovieReviewshow);
 router.put('/movie/wishlist',movieController.onemovieWishlist);
 router.post('/movie/wishlist',movieController.onemovieWishlistshow);
-
+router.post('/userdetails',movieController.userdetails)
 
 module.exports = router;

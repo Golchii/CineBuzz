@@ -19,8 +19,8 @@ const movieschema = mongoose.Schema({
     genre:{
         type:String
     },
-    creater:{
-        type:String
+    views:{
+        type:Number
     },
     year:{
         type:String

@@ -1,16 +1,21 @@
-const { size } = require('lodash');
+const { size, sortBy } = require('lodash');
+const { findOne } = require('../models/moviesmodel');
 const movieModel = require('../models/moviesmodel');
 const user = require('../models/user');
 exports.trendingsection = async(req ,res ,next)=>{
-    movieModel.find({section:'Trending'},'poster name',(err ,item)=>{
+    let a = [];
+    movieModel.find({},'poster name views',(err ,item)=>{
         if(err){
             console.log(err);
         }
         else{
-            console.log(item);
-            res.json(item);
+            for(let i=0 ; i < 5 ; i++){
+                a.push(item[i]);
+            }
+            console.log(a);
+            res.json(a);
         }
-    })
+    }).sort({"views":-1});
 }
 
 exports.Premieresection = async(req , res ,next)=>{
@@ -89,8 +94,8 @@ exports.onemovieRatingshow=async(req,res,next)=>{
             sum= sum + item[0].ratingArr[l].rating
         }
         res.statusCode = 201;
-        console.log(sum/l);
-        res.json(sum/l);
+        console.log((sum/l).toPrecision(2)+"");
+        res.json((sum/l).toPrecision(2)+"");
     })
 }
 exports.onemovieRating = async(req , res ,next)=>{
@@ -175,15 +180,20 @@ exports.onemovieReview = async(req ,res ,next)=>{
         res.statusCode = 201;
     })
 }
+exports.userdetails = async(req,res,next)=>{
+    const userid =req.body.userid;
+    user.findOne({_id:userid},'dpUrl name',(err,item)=>{
+        res.statusCode =202;
+        res.json(item)
+        console.log(item);
+    })
+}
 exports.onemovieReviewshow=async(req,res,next)=>{
     const Movieid = req.body.Movieid;
-    const Arr = [];
-    movieModel.findOne({_id:Movieid},(err,item)=>{
-        const userReview = item.reviewArr;
-        const userRating = item.ratingArr;
-        Arr.push(userReview,userRating);
-        console.log(Arr);
-        res.json(Arr);
+    movieModel.findOne({_id:Movieid},async(err,item)=>{
+        res.statusCode = 201;
+        res.json(item.reviewArr);
+        console.log(item.reviewArr);
     })
 }
 exports.history = async(req ,res ,next)=>{
@@ -207,6 +217,22 @@ exports.history = async(req ,res ,next)=>{
         }
     })
 }
+exports.showHistory = async (req , res ,next)=>{
+    const userid = req.body.userid;
+    user.findOne({_id:userid},(err,item)=>{
+        console.log(item.history);
+        res.statusCode = 201;
+        res.json(item.history);
+    })
+}
+exports.movieCount = async (req ,res ,next)=>{
+    const userid = req.body.userid;
+    user.findOne({_id:userid},(err,item)=>{
+        console.log(size(item.history));
+        res.statusCode = 201;
+        res.json(size(item.history)+"");
+    })
+}
 exports.onemovieWishlist = async(req,res,next)=>{
     const Movieid =req.body.Movieid;
     const userid = req.body.userid;
@@ -216,7 +242,7 @@ exports.onemovieWishlist = async(req,res,next)=>{
         for(let k =0 ; k<size(item.wishlistArr);k++){
             if(Movieid===item.wishlistArr[k]){
                 console.log("again");
-                item.wishlistArr.pop();
+                item.wishlistArr.splice(k,1);
                 res.statusCode = 301;
                 res.json('removed from wishlist')
                 x=false;
@@ -238,11 +264,13 @@ exports.onemovieWishlistshow = async(req,res,next)=>{
         let x = true;
         for(let k =0 ; k<size(item.wishlistArr);k++){
             if(Movieid===item.wishlistArr[k]){
+                console.log(1);
                 res.json("1");
                 x = false;
             }
         }
         if(x===true){
+            console.log(0);
             res.json("0");
         }
     });
@@ -254,4 +282,13 @@ exports.Allwishlist = async (req ,res,next)=>{
         res.statusCode = 201;
         res.json(item.wishlistArr);
     })
+}
+exports.deleteHistory = async(req , res ,next)=>{
+    const userid = req.body.userid;
+    user.findOne({_id:userid},(err,item)=>{
+        item.history=[];
+        item.save();
+    })
+    res.statusCode = 201;
+    res.json('history cleared')
 }
