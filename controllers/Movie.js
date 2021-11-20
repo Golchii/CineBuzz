@@ -133,7 +133,7 @@ exports.onemovieRating = async(req , res ,next)=>{
     res.statusCode =201;
     res.json('done');
 }
-var arr=[];
+
 exports.refreshArr = async(req,res,next)=>{
     user.findOne({_id:req.body.userid},(err,item)=>{
         item.token = [];

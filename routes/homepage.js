@@ -10,13 +10,13 @@ const movieController = require('../controllers/Movie');
 const isAuth = require('../middleware/isAuth');
 //routes
 
-router.get('/trending',isAuth,movieController.trendingsection);
-router.get('/Premiere',isAuth,movieController.Premieresection);
-router.get('/action',isAuth,movieController.actionsection);
-router.get('/comedy',isAuth,movieController.comedysection);
-router.get('/horror',isAuth,movieController.horrersection);
-router.get('/drama',isAuth,movieController.dramasection);
-router.post('/random',isAuth,movieController.randomfxn);
+router.get('/trending',movieController.trendingsection);
+router.get('/Premiere',movieController.Premieresection);
+router.get('/action',movieController.actionsection);
+router.get('/comedy',movieController.comedysection);
+router.get('/horror',movieController.horrersection);
+router.get('/drama',movieController.dramasection);
+router.post('/random',movieController.randomfxn);
 router.post('/refreshlist',movieController.refreshArr);
 router.post('/wishlist',movieController.Allwishlist);
 router.post('/movie/history',movieController.history);

@@ -8,6 +8,7 @@ const dotenv = require('dotenv/config');
 const otpgenerator = require('otp-generator');
 const user = require('../models/user');
 const { result } = require('lodash');
+const {validationResult} = require('express-validator');
 const transport = nodemailer.createTransport(sendgrid({
     auth: {
         api_key: process.env.API
@@ -16,6 +17,13 @@ const transport = nodemailer.createTransport(sendgrid({
 exports.signupreq = async(req , res ,next)=>{
     const name = req.body.name;
     const email = req.body.email;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        const error = new Error('Validation failed');
+        error.statusCode = 420;
+        error.data = errors.array()
+        return res.json({"error":error});
+    }
     console.log(name);
     console.log(email);
     userdata.findOne({email:email}).then(result =>{
@@ -44,7 +52,7 @@ exports.signupreq = async(req , res ,next)=>{
             to:email,
             from:'kyabaathai21@gmail.com',  
             subject:'your OTP',
-            html:`<h1> your otp is:  ${OTPgen} </h1>`
+            html:`<h3> your otp is:  ${OTPgen} </h3>`
         })
         res.statusCode=201;
         console.log('otp send');
@@ -76,6 +84,13 @@ exports.otpreq = (req , res ,next)=>{
     })
 }
 exports.passreq = async(req ,res ,next)=>{
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        const error = new Error('Validation failed');
+        error.statusCode = 420;
+        error.data = errors.array()
+        return res.json({"error":error});
+    }
     const name = req.body.name;
     const email = req.body.email;
     const pass = req.body.pass;
