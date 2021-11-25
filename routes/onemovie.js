@@ -10,6 +10,7 @@ const movieController = require('../controllers/Movie');
 router.post('/movie',movieController.onemovie)
 router.put('/movie/rating',movieController.onemovieRating);
 router.post('/movie/rating',movieController.onemovieRatingshow);
+router.post('/movie/rating/your',movieController.yourRating);
 router.put('/movie/review',movieController.onemovieReview);
 router.post('/movie/review',movieController.onemovieReviewshow);
 router.put('/movie/wishlist',movieController.onemovieWishlist);
