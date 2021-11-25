@@ -8,6 +8,7 @@ const dotenv = require('dotenv/config');
 const otpgenerator = require('otp-generator');
 const user = require('../models/user');
 const { result } = require('lodash');
+const { validationResult } = require('express-validator');
 const transport = nodemailer.createTransport(sendgrid({
     auth: {
         api_key: process.env.API
@@ -16,6 +17,10 @@ const transport = nodemailer.createTransport(sendgrid({
 exports.signupreq = async(req , res ,next)=>{
     const name = req.body.name;
     const email = req.body.email;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(422).json('validation failed');
+    }
     console.log(name);
     console.log(email);
     userdata.findOne({email:email}).then(result =>{
@@ -80,11 +85,15 @@ exports.passreq = async(req ,res ,next)=>{
     const email = req.body.email;
     const pass = req.body.pass;
     const confirmpass = req.body.confirmpass;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(422).json('validation failed');
+    }
     if(pass !== confirmpass){
         return res.json('password must be same!');
     }
     const hpass = await bcrypt.hash(pass ,10);
-    const token = jwt.sign({email:email},process.env.TKN,{expiresIn:'1d'});
+    const token = jwt.sign({email:email},process.env.TKN,{expiresIn:'7d'});
     const data = new userdata({
         name:name,
         email:email,
@@ -113,7 +122,7 @@ exports.Resetpassreq = async(req ,res ,next)=>{
     }
     const hpass = await bcrypt.hash(pass ,10);
     console.log('password set');
-    const token = jwt.sign({email:email},process.env.TKN,{expiresIn:'1d'});
+    const token = jwt.sign({email:email},process.env.TKN,{expiresIn:'7d'});
     return userdata.findOneAndUpdate({email:email},{pass:hpass}).then(user =>{
         const userdetails = {
             id:user._id,
@@ -154,7 +163,7 @@ exports.forgotreq = async(req , res ,next)=>{
             to:email,
             from:'kyabaathai21@gmail.com',  
             subject:'your OTP',
-            html:`<h3> your otp is:${OTPgen} </h3>`
+            html:`<h3> your otp is: ${OTPgen} </h3>`
         })
         res.statusCode=201;
         console.log('otp send');

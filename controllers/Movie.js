@@ -11,7 +11,7 @@ const transport = nodemailer.createTransport(sendgrid({
 
 const user = require('../models/user');
 exports.trendingsection = async(req ,res ,next)=>{
-    let a = [];;
+    let a = [];
     movieModel.find({},'poster name views',(err ,item)=>{
         if(err){
             console.log(err);
@@ -133,7 +133,21 @@ exports.onemovieRating = async(req , res ,next)=>{
     res.statusCode =201;
     res.json('done');
 }
-
+exports.yourRating = async(req,res,next)=>{
+    const userid = req.body.userid;
+    const Movieid = req.body.Movieid;
+    movieModel.findOne({_id:Movieid},(err,item)=>{
+        for(var k = 0 ; k < size(item.ratingArr) ; k++){
+            if(userid===item.ratingArr[k].userid){
+                console.log('your rating');
+                res.statusCode = 201;
+                return res.json(item.ratingArr[k].rating+"");
+            }
+        }
+        res.statusCode = 301;
+        return res.json("0")
+    })
+}
 exports.refreshArr = async(req,res,next)=>{
     user.findOne({_id:req.body.userid},(err,item)=>{
         item.token = [];

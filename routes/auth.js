@@ -16,7 +16,7 @@ router.post('/login',loginController.loginReq);
 router.post('/forgot',signupController.forgotreq);
 router.post('/signup',body('email').isEmail(),signupController.signupreq);
 router.post('/otp',signupController.otpreq);
-router.put('/password',body('pass').isLength({min:6}).matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$"),signupController.passreq)
+router.put('/password',body('pass').isLength({min:6}).matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[\$#%@&*/+_=?^!]).{6,}$"),signupController.passreq)
 router.put('/resetpass',signupController.Resetpassreq);
 router.post('/changepass',signupController.changePassword);
 
