@@ -17,7 +17,8 @@ exports.loginReq = async(req , res , next)=>{
                     id:user._id,
                     name:user.name,
                     email:email,
-                    token:token
+                    token:token,
+                    dpUrl:user.dpUrl
                 }
                 return res.json(userdetails);
             }

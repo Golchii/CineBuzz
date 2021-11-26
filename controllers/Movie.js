@@ -38,7 +38,9 @@ exports.Premieresection = async(req , res ,next)=>{
     })
 }
 exports.actionsection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Action'},'poster name',(err ,item)=>{
+    const genre = req.query.genre;
+    console.log(genre)
+    movieModel.find({genre:genre},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
         }
@@ -48,45 +50,48 @@ exports.actionsection = async(req ,res ,next)=>{
         }
     })
 }
-exports.comedysection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Comedy'},'poster name',(err ,item)=>{
-        if(err){
-            console.log(err);
-        }
-        else{
-            console.log(item);
-            res.json(item);
-        }
-    })
-}
-exports.horrersection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Horrer'},'poster name',(err ,item)=>{
-        if(err){
-            console.log(err);
-        }
-        else{
-            console.log(item);
-            res.json(item);
-        }
-    })
-}
-exports.dramasection = async(req ,res ,next)=>{
-    movieModel.find({genre:'Drama'},'poster name',(err ,item)=>{
-        if(err){
-            console.log(err);
-        }
-        else{
-            console.log(item);
-            res.json(item);
-        }
-    })
-}
+// exports.comedysection = async(req ,res ,next)=>{
+//     movieModel.find({genre:'Comedy'},'poster name',(err ,item)=>{
+//         if(err){
+//             console.log(err);
+//         }
+//         else{
+//             console.log(item);
+//             res.json(item);
+//         }
+//     })
+// }
+// exports.horrersection = async(req ,res ,next)=>{
+//     movieModel.find({genre:'Horrer'},'poster name',(err ,item)=>{
+//         if(err){
+//             console.log(err);
+//         }
+//         else{
+//             console.log(item);
+//             res.json(item);
+//         }
+//     })
+// }
+// exports.dramasection = async(req ,res ,next)=>{
+//     movieModel.find({genre:'Drama'},'poster name',(err ,item)=>{
+//         if(err){
+//             console.log(err);
+//             res.statusCode = 404;
+//             res.json(err);
+//         }
+//         else{
+//             console.log(item);
+//             res.json(item);
+//         }
+//     })
+// }
 exports.onemovie = async(req ,res , next)=>{
     const _id = req.body._id;
     movieModel.findOne({_id:_id},'name poster video genre creater plot',(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             res.statusCode = 201;
@@ -99,7 +104,8 @@ exports.onemovieRatingshow=async(req,res,next)=>{
     movieModel.find({_id:req.body.Movieid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             let sum = 0;
@@ -124,7 +130,8 @@ exports.onemovieRating = async(req , res ,next)=>{
     movieModel.findOne({_id:Movieid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             let x = true;
@@ -150,8 +157,9 @@ exports.yourRating = async(req,res,next)=>{
     const Movieid = req.body.Movieid;
     movieModel.findOne({_id:Movieid},(err,item)=>{
         if(err){
-            console.log(err);
-            res.statusCode = 301;
+            console.log(1);
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             for(var k = 0 ; k < size(item.ratingArr) ; k++){
@@ -170,7 +178,8 @@ exports.refreshArr = async(req,res,next)=>{
     user.findOne({_id:req.body.userid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             item.token = [];
@@ -185,7 +194,8 @@ exports.randomfxn = async(req , res , next)=>{
     movieModel.find({genre:req.body.genre},(err ,result)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             s = size(result);
@@ -227,7 +237,8 @@ exports.onemovieReview = async(req ,res ,next)=>{
     movieModel.findOne({_id:Movieid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             let x = true;
@@ -253,7 +264,8 @@ exports.userdetails = async(req,res,next)=>{
     user.findOne({_id:userid},'dpUrl name',(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             res.statusCode =202;
@@ -267,7 +279,8 @@ exports.onemovieReviewshow=async(req,res,next)=>{
     movieModel.findOne({_id:Movieid},async(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             res.statusCode = 201;
@@ -282,7 +295,8 @@ exports.history = async(req ,res ,next)=>{
     movieModel.findOne({_id:Movieid},(err,result)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             result.views++;
@@ -312,7 +326,8 @@ exports.showHistory = async (req , res ,next)=>{
     user.findOne({_id:userid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             console.log(item.history);
@@ -326,7 +341,8 @@ exports.movieCount = async (req ,res ,next)=>{
     user.findOne({_id:userid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             console.log(size(item.history));
@@ -341,7 +357,8 @@ exports.onemovieWishlist = async(req,res,next)=>{
     user.findOne({_id:userid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             let x = true;
@@ -371,7 +388,8 @@ exports.onemovieWishlistshow = async(req,res,next)=>{
     user.findOne({_id:userid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             let x = true;
@@ -394,7 +412,8 @@ exports.Allwishlist = async (req ,res,next)=>{
     user.findOne({_id:userid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json('no user');
         }
         else{
             console.log(item.wishlistArr);
@@ -408,7 +427,8 @@ exports.deleteHistory = async(req , res ,next)=>{
     user.findOne({_id:userid},(err,item)=>{
         if(err){
             console.log(err);
-            res.statusCode = 301;
+            res.statusCode = 404;
+            res.json(err);
         }
         else{
             item.history=[];

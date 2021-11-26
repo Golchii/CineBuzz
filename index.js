@@ -19,13 +19,6 @@ const app = express();
 app.use(express.json());
 app.use('/video',express.static(__dirname+'/video'));
 app.use(cors());
-app.use((req ,res ,next)=>{
-    res.setHeader('Access-Control-Allow-Origin','*');
-    res.setHeader('Access-Control-Allow-Methods',
-    'OPTION,GET,POST,PUT,PATCH,DELETE');
-    res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
-    next();
-})
 
 
 app.use(authRoutes);
