@@ -1,4 +1,4 @@
-const { size, sortBy } = require('lodash');
+const { size, sortBy, result } = require('lodash');
 const { findOne } = require('../models/moviesmodel');
 const movieModel = require('../models/moviesmodel');
 const nodemailer = require('nodemailer');
@@ -26,17 +26,6 @@ exports.trendingsection = async(req ,res ,next)=>{
     }).sort({"views":-1});
 }
 
-exports.Premieresection = async(req , res ,next)=>{
-    movieModel.find({section:'Premiere'},'poster name',(err ,item)=>{
-        if(err){
-            console.log(err);
-        }
-        else{
-            console.log(item);
-            res.json(item);
-        }
-    })
-}
 exports.actionsection = async(req ,res ,next)=>{
     const genre = req.query.genre;
     console.log(genre)
@@ -50,41 +39,6 @@ exports.actionsection = async(req ,res ,next)=>{
         }
     })
 }
-// exports.comedysection = async(req ,res ,next)=>{
-//     movieModel.find({genre:'Comedy'},'poster name',(err ,item)=>{
-//         if(err){
-//             console.log(err);
-//         }
-//         else{
-//             console.log(item);
-//             res.json(item);
-//         }
-//     })
-// }
-// exports.horrersection = async(req ,res ,next)=>{
-//     movieModel.find({genre:'Horrer'},'poster name',(err ,item)=>{
-//         if(err){
-//             console.log(err);
-//         }
-//         else{
-//             console.log(item);
-//             res.json(item);
-//         }
-//     })
-// }
-// exports.dramasection = async(req ,res ,next)=>{
-//     movieModel.find({genre:'Drama'},'poster name',(err ,item)=>{
-//         if(err){
-//             console.log(err);
-//             res.statusCode = 404;
-//             res.json(err);
-//         }
-//         else{
-//             console.log(item);
-//             res.json(item);
-//         }
-//     })
-// }
 exports.onemovie = async(req ,res , next)=>{
     const _id = req.body._id;
     movieModel.findOne({_id:_id},'name poster video genre creater plot',(err,item)=>{
@@ -116,6 +70,17 @@ exports.onemovieRatingshow=async(req,res,next)=>{
             res.statusCode = 201;
             console.log((sum/l).toPrecision(2)+"");
             res.json((sum/l).toPrecision(2)+"");
+        }
+    })
+}
+exports.Premieresection = async(req , res ,next)=>{
+    movieModel.find({section:'Premiere'},'poster name',(err ,item)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log(item);
+            res.json(item);
         }
     })
 }
@@ -272,7 +237,7 @@ exports.userdetails = async(req,res,next)=>{
             res.json(item)
             console.log(item);
         }
-    })
+    }) 
 }
 exports.onemovieReviewshow=async(req,res,next)=>{
     const Movieid = req.body.Movieid;
@@ -474,4 +439,60 @@ exports.appLink = async (req,res, next)=>{
       }];
     res.statusCode = 201;  
     res.json(link);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// exports.testAPI = async(req ,res , next)=>{
+//     movieModel.aggregate( [{ $group: { _id: "$genre" , views:{$sum:"$views"}} }])
+//     .then(result=>{
+//         res.json(result);
+//     })
+// }
+exports.testAPI = async(req ,res , next)=>{
+    movieModel.aggregate([{
+        $group: { 
+            "_id": "$genre",
+            "views":{$sum:"$views"}
+        }},
+        {$sort:{
+            "views":-1
+        }}
+    ])
+    .then(result=>{
+        res.json(result);
+    })
 }

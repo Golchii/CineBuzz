@@ -13,9 +13,6 @@ const isAuth = require('../middleware/isAuth');
 router.get('/trending',isAuth,movieController.trendingsection);
 router.get('/Premiere',isAuth,movieController.Premieresection);
 router.get('/action',isAuth,movieController.actionsection);
-// router.get('/comedy',isAuth,movieController.comedysection);
-// router.get('/horror',isAuth,movieController.horrersection);
-// router.get('/drama',isAuth,movieController.dramasection);
 router.post('/random',isAuth,movieController.randomfxn);
 router.post('/refreshlist',movieController.refreshArr);
 router.post('/wishlist',movieController.Allwishlist);
@@ -24,6 +21,7 @@ router.post('/history',movieController.showHistory);
 router.post('/count',movieController.movieCount);
 router.post('/delete/history',movieController.deleteHistory);
 router.post('/feedback',movieController.feedback);
+router.get('/testing',movieController.testAPI);
 
 
 //upload dp
