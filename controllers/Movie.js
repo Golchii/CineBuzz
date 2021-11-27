@@ -12,17 +12,16 @@ const transport = nodemailer.createTransport(sendgrid({
 const user = require('../models/user');
 exports.trendingsection = async(req ,res ,next)=>{
     let a = [];
-    movieModel.find({},'poster name views',(err ,item)=>{
-        if(err){
-            console.log(err);
+    movieModel.find({},'poster name views').then(item=>{
+        for(let i=0 ; i < 10 ; i++){
+            a.push(item[i]);
         }
-        else{
-            for(let i=0 ; i < 10 ; i++){
-                a.push(item[i]);
-            }
-            console.log(a);
-            res.json(a);
-        }
+        console.log(a);
+        res.json(a);
+    }).catch(err=>{
+        console.log(err);
+        res.json(err);
+        res.statusCode = 404;
     }).sort({"views":-1});
 }
 
@@ -32,6 +31,7 @@ exports.actionsection = async(req ,res ,next)=>{
     movieModel.find({genre:genre},'poster name',(err ,item)=>{
         if(err){
             console.log(err);
+            res.statusCode =404;
         }
         else{
             console.log(item);
@@ -41,17 +41,21 @@ exports.actionsection = async(req ,res ,next)=>{
 }
 exports.onemovie = async(req ,res , next)=>{
     const _id = req.body._id;
-    movieModel.findOne({_id:_id},'name poster video genre creater plot',(err,item)=>{
-        if(err){
-            console.log(err);
+    movieModel.findOne({_id:_id},'name poster video genre creater plot')
+    .then(item=>{
+        if(!item){
             res.statusCode = 404;
-            res.json(err);
+            res.json('no movie exist');
         }
         else{
             res.statusCode = 201;
             console.log(item);
             res.json(item);
         }
+    }).catch(err=>{
+        console.log(err);
+        res.statusCode = 404;
+        res.json(err);
     })
 }
 exports.onemovieRatingshow=async(req,res,next)=>{
@@ -62,14 +66,20 @@ exports.onemovieRatingshow=async(req,res,next)=>{
             res.json(err);
         }
         else{
-            let sum = 0;
-            let l=0;
-            for(l = 0; l<size(item[0].ratingArr);l++){
-                sum= sum + item[0].ratingArr[l].rating
+            if(!item){
+                res.statusCode = 404;
+                res.json('No movie found');
             }
-            res.statusCode = 201;
-            console.log((sum/l).toPrecision(2)+"");
-            res.json((sum/l).toPrecision(2)+"");
+            else{
+                let sum = 0;
+                let l=0;
+                for(l = 0; l<size(item[0].ratingArr);l++){
+                    sum= sum + item[0].ratingArr[l].rating
+                }
+                res.statusCode = 201;
+                console.log((sum/l).toPrecision(2)+"");
+                res.json((sum/l).toPrecision(2)+"");
+            }
         }
     })
 }
@@ -92,39 +102,34 @@ exports.onemovieRating = async(req , res ,next)=>{
         userid:userid,
         rating:rating
     }
-    movieModel.findOne({_id:Movieid},(err,item)=>{
-        if(err){
-            console.log(err);
-            res.statusCode = 404;
-            res.json(err);
-        }
-        else{
-            let x = true;
-            for(var k=0 ; k< size(item.ratingArr); k++){
-                if(userid===item.ratingArr[k].userid){
-                    console.log("again rate");
-                    item.ratingArr[k].rating = rating;
-                    item.save();
-                    x=false;
-                }
-            }
-            if(x===true){
-                item.ratingArr.push(list);
+    movieModel.findOne({_id:Movieid}).then(item=>{
+        let x = true;
+        for(var k=0 ; k< size(item.ratingArr); k++){
+            if(userid===item.ratingArr[k].userid){
+                console.log("again rate");
+                item.ratingArr[k].rating = rating;
                 item.save();
+                x=false;
             }
-            res.statusCode =201;
-            res.json('done');
         }
+        if(x===true){
+            item.ratingArr.push(list);
+        item.save();
+        }
+        res.statusCode =201;
+        res.json('done');
+    }).catch(err=>{
+        res.statusCode = 404;
+        res.json(err);
     })
 }
 exports.yourRating = async(req,res,next)=>{
     const userid = req.body.userid;
     const Movieid = req.body.Movieid;
-    movieModel.findOne({_id:Movieid},(err,item)=>{
-        if(err){
-            console.log(1);
+    movieModel.findOne({_id:Movieid}).then(item=>{
+        if(!item){
             res.statusCode = 404;
-            res.json(err);
+            res.json('no movie');
         }
         else{
             for(var k = 0 ; k < size(item.ratingArr) ; k++){
@@ -137,21 +142,23 @@ exports.yourRating = async(req,res,next)=>{
             res.statusCode = 301;
             return res.json("0");
         }
+    }).catch(err=>{
+        console.log(err);
+        res.statusCode = 404;
+        res.json(err);
     })
 }
 exports.refreshArr = async(req,res,next)=>{
-    user.findOne({_id:req.body.userid},(err,item)=>{
-        if(err){
-            console.log(err);
-            res.statusCode = 404;
-            res.json(err);
-        }
-        else{
-            item.token = [];
-            item.save();
-            res.statusCode = 201;
-            res.json('done');
-        }
+    user.findOne({_id:req.body.userid}).then(item=>{
+        item.token = [];
+        item.save();
+        res.statusCode = 201;
+        res.json('done');
+ 
+    }).catch(err=>{
+        console.log(err);
+        res.statusCode = 404;
+        res.json(err);
     })
 }
 exports.randomfxn = async(req , res , next)=>{
@@ -165,7 +172,7 @@ exports.randomfxn = async(req , res , next)=>{
         else{
             s = size(result);
             var x = Math.floor(Math.random()*(s));
-            user.findOne({_id:userid},(err,item)=>{
+            user.findOne({_id:userid}).then(item=>{
                 var i=0;
                 for(i = 0 ; i < size(item.token) ; i++){
                     console.log(item.token);
@@ -187,6 +194,10 @@ exports.randomfxn = async(req , res , next)=>{
                 item.save();
                 console.log(x);
                 res.json(result[x]);
+            })
+            .catch(err=>{
+                res.statusCode = 404;
+                res.json(err);
             })
         }
     });
